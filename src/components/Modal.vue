@@ -11,25 +11,27 @@
         <ion-content class="ion-padding">
             <ion-item>
                 <ion-label position="stacked">Verifique placa antes de continuar</ion-label>
-                <ion-input type="text" readonly>1234567</ion-input>
+                <ion-input type="text" readonly>{{ id }}</ion-input>
             </ion-item>
             <ion-item>
                 <ion-label>Estación de servicio</ion-label>
-                <ion-select placeholder="Seleccionar">
-                    <ion-select-option value="1">Estacion 1</ion-select-option>
-                    <ion-select-option value="2">Estacion 2</ion-select-option>
-                    <ion-select-option value="3">Estacion 3</ion-select-option>
-                    <ion-select-option value="4">Estacion 4</ion-select-option>
-                    <ion-select-option value="5">Estacion 5</ion-select-option>
-                    <ion-select-option value="6">Estacion 6</ion-select-option>
+                <ion-select placeholder="Seleccionar" cancel-text="Cancelar"
+                            :value="selectedOption"
+                            @ionChange="selectedOption = $event.target.value">
+                    <ion-select-option v-for="(item, index) in this.es"
+                                       :key="index"
+                                       :value="item">{{ item }}</ion-select-option>
+
                 </ion-select>
             </ion-item>
-            <ion-button color="primary">Registrar</ion-button>
+            <ion-button color="primary" @click="sendToFirestore">Registrar</ion-button>
         </ion-content>
     </div>
 </template>
 
 <script>
+    import db from '../database.js';
+
     export default {
         name: 'Modal',
         props: {
@@ -37,10 +39,31 @@
         },
         data() {
             return {
-                content: 'Content',
+                id: this.id,
+                es: ["ES 1", "ES 2", "ES 3", "ES 4", "ES 5", "ES 6"],
+                selectedOption: null
             }
         },
         methods:{
+            showSuccessToast(){
+                return this.$ionic.toastController
+                    .create({
+                        message: 'Placa registrada satisfactoriamente.',
+                        duration: 3000,
+                    })
+                    .then(a => a.present())
+            },
+            sendToFirestore(){
+                let info = {
+                    id: this.id,
+                    es: this.selectedOption,
+                    date: this.date,
+                    hour: this.hour
+                };
+                db.collection("placas").add(info).then(() =>{
+                   this.showSuccessToast()
+                })
+            }
         }
     }
 </script>
