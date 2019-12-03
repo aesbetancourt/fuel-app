@@ -13,7 +13,6 @@
     "@ionic/core": "^4.11.5",
     "@ionic/vue": "0.0.4",
     "core-js": "^3.4.3",
-    "date-time": "^3.1.0",
     "firebase": "^7.5.0",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3"
